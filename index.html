@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>TI40 TEST</title>
-    <script>
-        function loadJSON() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://github.com/Beanieec/TI40/blob/master/json1.json", true);
-            xhr.onload = function() {
-                if (xhr.status == 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    console.log(data);
-                } else {
-                    console.error('Ошибка: ' + xhr.status);
-                }
-            };
-            xhr.send();
-        }
-    </script>
-</head>
-<body>
-    <h1>Царин Иван АДБ-22-07</h1>
-    <button onclick="loadJSON()">НЕ НАЖИМАТЬ!</button>
-    <h2>кнопка не работает</h2>
-</body>
-</html>
 
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>My title</title>
+        <link rel="stylesheet" type="text/css" href="main.css">
+    </head>
+
+    <body>
+        <div class="main">
+            <h2>JavaScript Confirm Box</h2>
+            <button class="btn" onclick="myFunction()">Try it</button>
+            <ul id="demo">
+
+            </ul>
+        </div>
+        <script>
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            function myFunction() {
+                (async () => {
+                    let response = await fetch('https://github.com/Beanieec/TI40/blob/master/json1.json');
+                    let el = document.getElementById('slovo1')
+                    el.innerHTML = ""
+                    let text = await response.text(); // прочитать тело ответа как текст
+                    for (const [key, value] of Object.entries(JSON.parse(text)[0])) {
+                        const newEl = document.createElement("li")
+                        newEl.appendChild(document.createTextNode(`${key}: ${value}`))
+                        el.appendChild(newEl)
+                        await sleep(100)
+                    }
+                })()
+            }
+        </script>
+
+    </body>
+
+</html>
