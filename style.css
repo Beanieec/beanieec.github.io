@@ -1,0 +1,220 @@
+/* Основные стили */
+:root {
+    --primary-color: #00c6ff;
+    --secondary-color: #0072ff;
+    --accent-color: #00ffcc;
+    --dark-color: #0a192f;
+    --light-color: #ccd6f6;
+    --neon-glow: 0 0 10px rgba(0, 255, 204, 0.8);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a192f 0%, #172a45 100%);
+    color: var(--light-color);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    line-height: 1.6;
+    transition: background 0.5s ease;
+}
+
+h1, h2, h3 {
+    color: var(--accent-color);
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 30px;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Секции */
+.section {
+    background: rgba(10, 25, 47, 0.7);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 198, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+    .section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        border-color: var(--accent-color);
+    }
+
+    .section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient( 90deg, transparent, rgba(0, 255, 204, 0.1), transparent );
+        transition: 0.5s;
+    }
+
+    .section:hover::before {
+        left: 100%;
+    }
+
+/* Изображение кота */
+.cat-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 20px;
+    border: 3px solid var(--accent-color);
+    box-shadow: var(--neon-glow);
+    transition: all 0.3s ease;
+}
+
+    .cat-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+    }
+
+/* Формы и кнопки */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+input, textarea, select {
+    background: rgba(10, 25, 47, 0.8);
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: var(--light-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    }
+
+button {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+}
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 114, 255, 0.6);
+        background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+/* Форма анкеты */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--accent-color);
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Результаты */
+.result {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 198, 255, 0.1);
+    border-radius: 5px;
+    border-left: 3px solid var(--accent-color);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Анимации */
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px rgba(0, 255, 204, 0.5);
+    }
+
+    to {
+        text-shadow: 0 0 15px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.4);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Эффекты при наведении на имя и фамилию */
+#firstName:hover, #lastName:hover {
+    color: var(--accent-color);
+    text-shadow: var(--neon-glow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .section {
+        padding: 15px;
+    }
+}
