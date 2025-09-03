@@ -1,111 +1,762 @@
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Анкета</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="script.js"></script>
-    </head>
-
-    <body>
-        <h1>Анкета</h1>
-        <div class="container">
-            <div class="section">
-                
-                <img src="https://avatars.githubusercontent.com/u/167141275?v=4" class="cat-image">
-                <h2><span id="firstName">Иван</span> <span id="lastName">Царин</span></h2>
-                <p2>Возраст: 22 года</p2>
-                <h3>О себе</h3>
-                <p1>Студент 3 курса группы АДБ-22-07, направление "Автоматизация технологических процессов ии производств"</p1>
-                <p>Стюард Москва-Дубай</p>
-            </div>
-            <div class="section">
-                <h3>Контакты</h3>
-                <p1>Телефон: +77777777777</p1>
-                <h2></h2>
-                <p4>Почта: tsarin@tsarin.com</p4>
-            </div>
-            <h2>Задания</h2>
-            <div class="section">
-                <h3>Реализация функций min</h3>
-                <div class="input-group">
-                    <input type="number" id="num1" placeholder="Число 1">
-                    <input type="number" id="num2" placeholder="Число 2">
-                    <button onclick="Task1()">Решить</button>
-                </div>
-                
-                <div id="task1-result" class="result"></div>
-            </div>
-            <div class="section">
-                <h3>Присваивание переменной</h3>
-                <button onclick="Task2()">Выполнить</button>
-            </div>
-            <div class="section">
-                <h3>Проверка возраста</h3>
-                <button onclick="Task3()">Проверить возраст</button>
-                <div id="task3-result" class="result"></div>
-            </div>
-            <div class="section">
-                <h3>Изменить фамилию или фон</h3>
-                <input type="text" id="newLastName" placeholder="Введите новую фамилию">
-                <button onclick="changeLastName()">Изменить</button>
-                <button onclick="changeBackground()">Сменить цвет фона</button>
-            </div>
-            <div class="section">
-                <h3>Взаимодействие со страницей</h3>
-                <div class="task">
-                <h2>Анкета</h2>
-                <form id="questionnaire">
-                    <div class="form-group">
-                        <label for="user-name">Имя:</label>
-                        <input type="text" id="user-name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="user-age">Возраст:</label>
-                        <input type="number" id="user-age" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Пол:</label>
-                        <div>
-                            <input type="radio" id="male" name="gender" value="М" label for="male">М</label>
-                            <input type="radio" id="female" name="gender" value="Ж" label for="female">Ж</label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Навыки:</label>
-                        <div><input type="checkbox" id="math" name="skills" label for="math">Знание математики</label></div>
-                        <div><input type="checkbox" id="programming" name="skills" label for="programming">Знание программирования</label></div>
-                        <div><input type="checkbox" id="design" name="skills" label for="design">Дизайн</label></div>
-                        <div><input type="checkbox" id="late" name="skills" label for="late">Опаздывать</label></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="education">Образование:</label>
-                        <select id="education">
-                            <option value="school">Среднее</option>
-                            <option value="college">Среднее специальное</option>
-                            <option value="university">Высшее</option>
-                            <option value="space">Межгалактическое</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="comments">Комментарии:</label>
-                        <textarea id="comments"></textarea>
-                    </div>
-                    
-                    <button type="button" onclick="validateForm()">Отправить</button>
-                </form>
-                
-                <div id="form-result" class="result" style="display: none;">
-                    <h3>Результат проверки анкеты</h3>
-                    <p id="result-text"></p>
-                </div>
-            </div>
-            </div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточная игра "Дурак"</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2c3e50, #1a1a2e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .game-board {
+            position: relative;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .deck, .trump-card {
+            position: absolute;
+            width: 100px;
+            height: 140px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .deck {
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .deck:hover {
+            transform: translateY(-5px);
+        }
+        
+        .trump-card {
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #e74c3c;
+            font-size: 2rem;
+        }
+        
+        .battle-field {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .player-hand, .ai-hand {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            height: 130px;
+            perspective: 1000px;
+        }
+        
+        .player-hand {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .ai-hand {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+        }
+        
+        .card {
+            width: 80px;
+            height: 120px;
+            margin: 0 -15px;
+            border-radius: 6px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, margin 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transform-style: preserve-3d;
+        }
+        
+        .player-hand .card:hover {
+            transform: translateY(-20px);
+            margin: 0 5px;
+        }
+        
+        .card.red {
+            color: #e74c3c;
+        }
+        
+        .card.black {
+            color: #2c3e50;
+        }
+        
+        .card-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .card-suit {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-corner {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .card-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:disabled {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+        
+        .modal p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+        
+        @keyframes cardDraw {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes cardPlay {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-50px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
+        .card-draw {
+            animation: cardDraw 0.5s ease forwards;
+        }
+        
+        .card-play {
+            animation: cardPlay 0.5s ease forwards;
+        }
+        
+        @media (max-width: 768px) {
+            .game-board {
+                height: 400px;
+            }
+            
+            .card {
+                width: 60px;
+                height: 90px;
+                margin: 0 -12px;
+            }
+            
+            .card-value {
+                font-size: 1rem;
+            }
+            
+            .card-suit {
+                font-size: 1.2rem;
+            }
+            
+            .deck, .trump-card {
+                width: 70px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Дурак</h1>
+            <div class="status" id="status">Ваш ход</div>
         </div>
-    </body>
+        
+        <div class="game-board">
+            <div class="deck" id="deck">36</div>
+            <div class="trump-card" id="trump-card">♥</div>
+            
+            <div class="battle-field" id="battle-field"></div>
+            
+            <div class="ai-hand" id="ai-hand"></div>
+            <div class="player-hand" id="player-hand"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="take-btn">Взять</button>
+            <button id="pass-btn">Бито</button>
+            <button id="restart-btn">Новая игра</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <h2 id="result-title">Результат</h2>
+            <p id="result-message"></p>
+            <button id="close-modal">ОК</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Элементы DOM
+            const deckEl = document.getElementById('deck');
+            const trumpCardEl = document.getElementById('trump-card');
+            const battleFieldEl = document.getElementById('battle-field');
+            const playerHandEl = document.getElementById('player-hand');
+            const aiHandEl = document.getElementById('ai-hand');
+            const statusEl = document.getElementById('status');
+            const takeBtn = document.getElementById('take-btn');
+            const passBtn = document.getElementById('pass-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const resultModal = document.getElementById('result-modal');
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const closeModal = document.getElementById('close-modal');
+            
+            // Константы игры
+            const SUITS = ['♥', '♦', '♠', '♣'];
+            const VALUES = ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            const COLORS = {
+                '♥': 'red',
+                '♦': 'red',
+                '♠': 'black',
+                '♣': 'black'
+            };
+            
+            // Состояние игры
+            let deck = [];
+            let trumpSuit = '';
+            let playerCards = [];
+            let aiCards = [];
+            let tableCards = [];
+            let isPlayerTurn = true;
+            let isAttack = true;
+            
+            // Инициализация игры
+            function initGame() {
+                createDeck();
+                shuffleDeck(deck);
+                trumpSuit = deck[0].suit;
+                
+                // Раздача карт
+                playerCards = deck.splice(0, 6);
+                aiCards = deck.splice(0, 6);
+                
+                // Обновление колоды
+                deckEl.textContent = deck.length;
+                
+                // Установка козыря
+                trumpCardEl.textContent = trumpSuit;
+                trumpCardEl.className = `trump-card ${COLORS[trumpSuit]}`;
+                
+                // Очистка поля
+                battleFieldEl.innerHTML = '';
+                tableCards = [];
+                
+                // Отображение карт
+                renderHand(playerHandEl, playerCards, true);
+                renderHand(aiHandEl, aiCards, false);
+                
+                // Сброс состояния
+                isPlayerTurn = true;
+                isAttack = true;
+                updateStatus();
+                
+                // Активация кнопок
+                takeBtn.disabled = true;
+                passBtn.disabled = true;
+            }
+            
+            // Создание колоды
+            function createDeck() {
+                deck = [];
+                for (let suit of SUITS) {
+                    for (let value of VALUES) {
+                        deck.push({ suit, value });
+                    }
+                }
+            }
+            
+            // Перемешивание колоды
+            function shuffleDeck(deck) {
+                for (let i = deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [deck[i], deck[j]] = [deck[j], deck[i]];
+                }
+            }
+            
+            // Отображение карт игрока
+            function renderHand(container, cards, isPlayer) {
+                container.innerHTML = '';
+                
+                cards.forEach((card, index) => {
+                    const cardEl = createCardElement(card, index, isPlayer);
+                    container.appendChild(cardEl);
+                });
+            }
+            
+            // Создание элемента карты
+            function createCardElement(card, index, isPlayer) {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${COLORS[card.suit]} card-draw`;
+                cardEl.setAttribute('data-index', index);
+                
+                cardEl.innerHTML = `
+                    <div class="card-corner">${card.value}</div>
+                    <div class="card-suit">${card.suit}</div>
+                    <div class="card-corner" style="transform: rotate(180deg);">${card.value}</div>
+                `;
+                
+                if (isPlayer) {
+                    cardEl.addEventListener('click', () => {
+                        if (isPlayerTurn) {
+                            playCard(card, index, true);
+                        }
+                    });
+                }
+                
+                return cardEl;
+            }
+            
+            // Ход игрока или компьютера
+            function playCard(card, index, isPlayer) {
+                // Проверка возможности хода
+                if (isPlayer !== isPlayerTurn) return;
+                
+                // Если это атака и на столе есть карты, проверяем можно ли подкинуть
+                if (isAttack && tableCards.length > 0) {
+                    const canAdd = tableCards.some(tableCard => 
+                        tableCard.value === card.value
+                    );
+                    
+                    if (!canAdd) return;
+                }
+                
+                // Если это защита, проверяем может ли карта побить
+                if (!isAttack) {
+                    const attackingCard = tableCards[tableCards.length - 1];
+                    const canBeat = canCardBeat(attackingCard, card);
+                    
+                    if (!canBeat) return;
+                }
+                
+                // Удаляем карту из руки игрока
+                if (isPlayer) {
+                    playerCards.splice(index, 1);
+                    renderHand(playerHandEl, playerCards, true);
+                } else {
+                    aiCards.splice(index, 1);
+                    renderHand(aiHandEl, aiCards, false);
+                }
+                
+                // Добавляем карту на стол
+                tableCards.push({...card, player: isPlayer});
+                
+                // Отображаем карту на поле боя
+                const cardEl = createCardElement(card, 0, false);
+                cardEl.classList.add('card-play');
+                battleFieldEl.appendChild(cardEl);
+                
+                // Передаем ход
+                isPlayerTurn = !isPlayerTurn;
+                
+                // Если атаковали, то следующий ход - защита
+                if (isAttack) {
+                    isAttack = false;
+                }
+                
+                updateStatus();
+                
+                // Проверяем условия окончания хода
+                checkTurnEnd();
+                
+                // Если ход компьютера, делаем ход
+                if (!isPlayerTurn) {
+                    setTimeout(aiTurn, 1000);
+                }
+            }
+            
+            // Может ли карта побить другую карту
+            function canCardBeat(attackingCard, defendingCard) {
+                // Если масти совпадают, сравниваем значения
+                if (attackingCard.suit === defendingCard.suit) {
+                    return VALUES.indexOf(defendingCard.value) > VALUES.indexOf(attackingCard.value);
+                }
+                
+                // Если защищаемся козырем
+                if (defendingCard.suit === trumpSuit && attackingCard.suit !== trumpSuit) {
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            // Ход компьютера
+            function aiTurn() {
+                if (isAttack) {
+                    // Атака - находим карту с наименьшим значением
+                    let minValueIndex = 0;
+                    let minValue = 10; // Максимальное значение
+                    
+                    aiCards.forEach((card, index) => {
+                        const valueIndex = VALUES.indexOf(card.value);
+                        if (valueIndex < minValue) {
+                            minValue = valueIndex;
+                            minValueIndex = index;
+                        }
+                    });
+                    
+                    playCard(aiCards[minValueIndex], minValueIndex, false);
+                } else {
+                    // Защита - пытаемся найти карту, которой можно побить
+                    const attackingCard = tableCards[tableCards.length - 1];
+                    let cardToPlay = null;
+                    let cardIndex = -1;
+                    
+                    // Сначала ищем карту той же масти, но старше
+                    for (let i = 0; i < aiCards.length; i++) {
+                        const card = aiCards[i];
+                        if (card.suit === attackingCard.suit && 
+                            VALUES.indexOf(card.value) > VALUES.indexOf(attackingCard.value)) {
+                            cardToPlay = card;
+                            cardIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    // Если не нашли, ищем козырь (если атакующая карта не козырь)
+                    if (!cardToPlay && attackingCard.suit !== trumpSuit) {
+                        for (let i = 0; i < aiCards.length; i++) {
+                            const card = aiCards[i];
+                            if (card.suit === trumpSuit) {
+                                cardToPlay = card;
+                                cardIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Если нашли карту для защиты - ходим, иначе - берем
+                    if (cardToPlay) {
+                        playCard(cardToPlay, cardIndex, false);
+                    } else {
+                        aiTakeCards();
+                    }
+                }
+            }
+            
+            // Компьютер берет карты
+            function aiTakeCards() {
+                takeCards(false);
+            }
+            
+            // Игрок берет карты
+            function playerTakeCards() {
+                takeCards(true);
+            }
+            
+            // Взятие карт со стола
+            function takeCards(isPlayer) {
+                if (isPlayer) {
+                    playerCards = [...playerCards, ...tableCards.map(card => ({
+                        suit: card.suit,
+                        value: card.value
+                    }))];
+                } else {
+                    aiCards = [...aiCards, ...tableCards.map(card => ({
+                        suit: card.suit,
+                        value: card.value
+                    }))];
+                }
+                
+                // Очищаем стол
+                tableCards = [];
+                battleFieldEl.innerHTML = '';
+                
+                // Добираем карты
+                drawCards();
+                
+                // Передаем ход
+                isPlayerTurn = !isPlayer;
+                isAttack = true;
+                
+                // Обновляем отображение
+                renderHand(playerHandEl, playerCards, true);
+                renderHand(aiHandEl, aiCards, false);
+                updateStatus();
+                
+                // Если ход компьютера
+                if (!isPlayerTurn) {
+                    setTimeout(aiTurn, 1000);
+                }
+            }
+            
+            // Добор карт из колоды
+            function drawCards() {
+                // Игрок добирает до 6 карт
+                while (playerCards.length < 6 && deck.length > 0) {
+                    playerCards.push(deck.shift());
+                }
+                
+                // Компьютер добирает до 6 карт
+                while (aiCards.length < 6 && deck.length > 0) {
+                    aiCards.push(deck.shift());
+                }
+                
+                // Обновляем отображение колоды
+                deckEl.textContent = deck.length;
+            }
+            
+            // Проверка окончания хода
+            function checkTurnEnd() {
+                // Если защищающийся отбился
+                if (!isAttack && tableCards.length % 2 === 0) {
+                    // Если защищающийся отбил все карты
+                    if (tableCards.length > 0 && tableCards.length % 2 === 0) {
+                        // Очищаем стол
+                        setTimeout(() => {
+                            tableCards = [];
+                            battleFieldEl.innerHTML = '';
+                            
+                            // Добираем карты
+                            drawCards();
+                            
+                            // Передаем ход
+                            isPlayerTurn = !isPlayerTurn;
+                            isAttack = true;
+                            
+                            // Обновляем отображение
+                            renderHand(playerHandEl, playerCards, true);
+                            renderHand(aiHandEl, aiCards, false);
+                            updateStatus();
+                            
+                            // Проверяем конец игры
+                            checkGameEnd();
+                            
+                            // Если ход компьютера
+                            if (!isPlayerTurn) {
+                                setTimeout(aiTurn, 1000);
+                            }
+                        }, 1000);
+                    }
+                }
+                
+                // Активируем/деактивируем кнопки
+                takeBtn.disabled = isPlayerTurn ? false : true;
+                passBtn.disabled = isPlayerTurn ? false : true;
+                
+                // Проверяем конец игры
+                checkGameEnd();
+            }
+            
+            // Проверка окончания игры
+            function checkGameEnd() {
+                // Если у игрока закончились карты
+                if (playerCards.length === 0) {
+                    if (deck.length === 0 && aiCards.length === 0) {
+                        showResult("Ничья!", "Оба игрока остались без карт!");
+                    } else {
+                        showResult("Поздравляем!", "Вы выиграли эту партию!");
+                    }
+                    return true;
+                }
+                
+                // Если у компьютера закончились карты
+                if (aiCards.length === 0) {
+                    showResult("Вы проиграли!", "Компьютер разыграл все карты!");
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            // Показать результат игры
+            function showResult(title, message) {
+                resultTitle.textContent = title;
+                resultMessage.textContent = message;
+                resultModal.style.display = 'flex';
+                
+                // Блокируем кнопки
+                takeBtn.disabled = true;
+                passBtn.disabled = true;
+            }
+            
+            // Обновление статуса игры
+            function updateStatus() {
+                if (isPlayerTurn) {
+                    statusEl.textContent = isAttack ? "Ваш ход: атакуйте!" : "Ваш ход: защищайтесь!";
+                } else {
+                    statusEl.textContent = isAttack ? "Ход компьютера: атака" : "Ход компьютера: защита";
+                }
+            }
+            
+            // Обработчики событий
+            takeBtn.addEventListener('click', playerTakeCards);
+            
+            passBtn.addEventListener('click', () => {
+                if (isPlayerTurn && tableCards.length > 0 && tableCards.length % 2 === 0) {
+                    // Очищаем стол
+                    tableCards = [];
+                    battleFieldEl.innerHTML = '';
+                    
+                    // Добираем карты
+                    drawCards();
+                    
+                    // Передаем ход
+                    isPlayerTurn = false;
+                    isAttack = true;
+                    
+                    // Обновляем отображение
+                    renderHand(playerHandEl, playerCards, true);
+                    renderHand(aiHandEl, aiCards, false);
+                    updateStatus();
+                    
+                    // Ход компьютера
+                    setTimeout(aiTurn, 1000);
+                }
+            });
+            
+            restartBtn.addEventListener('click', initGame);
+            
+            closeModal.addEventListener('click', () => {
+                resultModal.style.display = 'none';
+            });
+            
+            // Запуск игры
+            initGame();
+        });
+    </script>
+</body>
 </html>
