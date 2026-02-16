@@ -2,199 +2,488 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Молоток и фотография</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>Кликер · Фото Monstric</title>
+    <!-- Настройки для веб-приложения на iPhone (мини-приложение) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ФотоКликер">
+    <!-- Иконка-плейсходер (монстрик) -->
+    <link rel="apple-touch-icon" href="https://allwebs.ru/image/hR4t2w">
+    <!-- Fallback иконка через data: в CSS не нужна, но можно оставить ссылку -->
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #3a2c40, #1a1120);
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            margin: 0;
+            /* безопасная зона iPhone */
+            padding-top: max(10px, env(safe-area-inset-top));
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            padding-left: max(10px, env(safe-area-inset-left));
+            padding-right: max(10px, env(safe-area-inset-right));
+        }
+
+        .game-card {
+            max-width: 420px;
+            width: 100%;
+            background: rgba(30, 20, 35, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 28px 18px 30px;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.6), 0 0 0 2px rgba(255, 184, 53, 0.5) inset;
+            border: 1px solid rgba(255, 180, 60, 0.4);
+            transition: box-shadow 0.2s;
+        }
+
+        /* Счетчик — большой и сочный */
+        .score-board {
+            background: rgba(15, 8, 20, 0.8);
+            border-radius: 100px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            border: 1px solid #ffb45b;
+            box-shadow: 0 8px 0 #0d0713;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(5px);
+        }
+
+        .score-label {
+            color: #fdd7a8;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        #scoreDisplay {
+            font-size: 3.6rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #ffe792, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+            text-shadow: 0 0 15px #ff9900;
+            transition: transform 0.15s;
+        }
+
+        #scoreDisplay.pop {
+            transform: scale(1.2);
+            filter: brightness(1.3);
+        }
+
+        /* Контейнер с фото (кликабельное) */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 15px;
+            filter: drop-shadow(0 18px 20px #00000080);
+        }
+
+        .click-photo {
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            object-fit: cover;      /* фото подстроится под круг */
+            border: 8px solid #ffc285;
+            box-shadow: 0 20px 25px -5px black, 0 0 0 6px #ffac4d, 0 0 0 12px rgba(255, 180, 60, 0.3);
+            transition: all 0.1s cubic-bezier(0.2, 1.4, 0.4, 1.2);
+            cursor: pointer;
+            display: block;
+            background: #ffb457;    /* фон пока грузится */
+            -webkit-user-drag: element; /* не мешает кликам */
+            touch-action: manipulation;
+        }
+
+        /* Анимация нажатия: сжатие + свечение */
+        .click-photo:active {
+            transform: scale(0.86);
+            filter: brightness(1.2) saturate(1.6);
+            box-shadow: 0 20px 25px -3px black, 0 0 0 6px #ffd58c, 0 0 30px 12px #ffae42;
+        }
+
+        /* Класс для дополнительной вспышки (можно через JS навесить) */
+        .photo-flash {
+            animation: photoPulse 0.25s ease-out !important;
+        }
+
+        @keyframes photoPulse {
+            0% { box-shadow: 0 20px 25px -5px black, 0 0 0 6px #fff3b0, 0 0 40px 20px #ffdd88; }
+            100% { box-shadow: 0 20px 25px -5px black, 0 0 0 6px #ffac4d, 0 0 0 12px rgba(255, 180, 60, 0.3); }
+        }
+
+        /* Прогресс-бары (мили) */
+        .milestones-panel {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 60px;
+            padding: 18px 14px 20px;
+            margin: 20px 0 16px;
+            backdrop-filter: blur(6px);
+            border: 1px solid #ffb04f;
+        }
+
+        .milestones-header {
+            color: #ffd9a3;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-left: 8px;
+        }
+
+        .milestones-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .milestone-badge {
+            background: #2f1e30;
+            border-radius: 50px;
+            padding: 8px 16px;
+            min-width: 70px;
+            text-align: center;
+            box-shadow: 0 5px 0 #1c111e;
+            border: 1px solid #b17d51;
+            transition: all 0.2s;
+            color: #cfa87c;
+            font-weight: 600;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-            cursor: none;
+            gap: 6px;
+            font-size: 1.2rem;
         }
 
-        h1 {
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
+        .milestone-badge.reached {
+            background: #f7b731;
+            border-color: #ffdb9d;
+            box-shadow: 0 5px 0 #b87c1b, 0 0 20px #ffae42;
+            color: #2b1d0e;
+            transform: translateY(-2px);
         }
 
-        .container {
-            position: relative;
-            width: 800px;
-            height: 450px;
-            margin: 20px auto;
-            border: 5px solid #333;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            background-color: #000;
+        .milestone-emoji {
+            font-size: 1.8rem;
+            filter: drop-shadow(2px 2px 2px black);
         }
 
-        #photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: filter 0.3s;
-        }
-
-        .crack {
-            position: absolute;
+        /* Всплывающее ачивка (по центру) */
+        .toast-achievement {
+            position: fixed;
+            top: 22%;
+            left: 50%;
+            transform: translateX(-50%) scale(0.7);
+            background: rgba(40, 25, 20, 0.9);
+            backdrop-filter: blur(20px);
+            border: 3px solid #ffc107;
+            border-radius: 70px;
+            padding: 18px 32px;
+            color: #ffecb3;
+            font-weight: bold;
+            font-size: 2rem;
+            white-space: nowrap;
+            box-shadow: 0 15px 30px black, 0 0 50px #ffae00;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.3s;
             pointer-events: none;
-            z-index: 10;
-            background-size: contain;
-            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
 
-        #hammer {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,30 L70,10 L90,30 L70,50 L30,30 Z" fill="%23cc0000"/><rect x="40" y="50" width="20" height="40" fill="%23666"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
+        .toast-achievement.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .toast-icon {
+            font-size: 3.4rem;
+        }
+
+        /* Вспышка на весь экран */
+        .flash-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, #ffec9e 0%, transparent 70%);
+            opacity: 0;
             pointer-events: none;
-            z-index: 100;
-            transform-origin: center bottom;
-            transition: transform 0.1s;
+            z-index: 9997;
+            transition: opacity 0.1s;
         }
-
-        .hit {
-            animation: hit 0.3s forwards;
+        .flash-overlay.active {
+            opacity: 0.7;
+            animation: fadeAway 0.5s forwards;
         }
+        @keyframes fadeAway { 0% { opacity: 0.7; } 100% { opacity: 0; } }
 
-        @keyframes hit {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(-45deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        .instructions {
-            color: white;
+        /* Кнопка сброса */
+        .reset-action {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid #ffac5c;
+            border-radius: 40px;
+            padding: 12px 20px;
+            width: fit-content;
+            margin: 15px auto 0;
+            color: #ffd9a0;
+            font-weight: 500;
             text-align: center;
-            margin-top: 20px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 5px;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
+            box-shadow: 0 5px 0 #2f1d2e;
+            cursor: pointer;
+            font-size: 1.1rem;
         }
+
+        .reset-action:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #2f1d2e;
+        }
+
+        body { overflow: hidden; }
+        .game-card { overflow-y: auto; max-height: 95vh; scrollbar-width: none; }
+        .game-card::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
-    <h1>Бей молотком по фотографии!</h1>
-    
-    <div class="container">
-        <img id="photo" src="https://sun9-30.userapi.com/s/v1/ig2/AgKpbvywviOnnJWbniAQtLnqURJuPh9ZMsxBEkOhtPFjP2BrOZ1REwGDeFg6Fkz8MS7ggKaRwADyapx29jKMggl2.jpg?quality=95&as=32x41,48x62,72x93,108x139,160x206,240x308,360x463,480x617,540x694,640x823,720x925,827x1063&from=bu&cs=827x0" alt="Фотография для ударов">
-        <div id="hammer"></div>
+    <div class="game-card">
+        <!-- Счет -->
+        <div class="score-board">
+            <span class="score-label">🔥 СЧЁТ</span>
+            <span id="scoreDisplay">0</span>
+        </div>
+
+        <!-- Фото для кликов (прямая ссылка) -->
+        <div class="image-container">
+            <img src="https://allwebs.ru/image/hR4t2w" 
+                 alt="кликабельный монстрик" 
+                 class="click-photo" 
+                 id="clickPhoto"
+                 crossorigin="anonymous">
+        </div>
+
+        <!-- Мильные камни (цели) -->
+        <div class="milestones-panel">
+            <div class="milestones-header">⚡ РУБЕЖИ ⚡</div>
+            <div class="milestones-grid" id="milestoneGrid"></div>
+        </div>
+
+        <!-- Сброс -->
+        <div class="reset-action" id="resetButton">⟲ Обнулить</div>
     </div>
-    
-    <div class="instructions">
-        <p>Кликните в любое место фотографии, чтобы ударить молотком</p>
-        <p>Нажмите R для сброса фотографии</p>
+
+    <!-- Тосты -->
+    <div class="toast-achievement" id="achievementToast">
+        <span class="toast-icon" id="toastIcon">🏆</span>
+        <span id="toastText">Цель</span>
     </div>
+
+    <!-- Вспышка фона -->
+    <div class="flash-overlay" id="flashOverlay"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            const photo = document.getElementById('photo');
-            const hammer = document.getElementById('hammer');
-            
-            // Создаем массив с возможными трещинами
-            const cracks = [
-                'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,10 C30,30 50,20 70,40 C80,50 90,40 90,60" stroke="white" stroke-width="2" fill="none" /></svg>',
-                'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,80 C40,60 60,70 80,50 C85,45 90,50 90,60" stroke="white" stroke-width="2" fill="none" /></svg>',
-                'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,10 C40,40 60,50 50,80" stroke="white" stroke-width="2" fill="none" /></svg>'
+        (function() {
+            // --- данные о рубежах
+            const MILESTONES = [
+                { score: 10, emoji: '🔰', name: '10' },
+                { score: 25, emoji: '🎯', name: '25' },
+                { score: 50, emoji: '🏅', name: '50' },
+                { score: 100, emoji: '🏆', name: '100' },
+                { score: 250, emoji: '👑', name: '250' },
+                { score: 500, emoji: '💎', name: '500' },
+                { score: 1000, emoji: '🚀', name: '1K' },
+                { score: 2000, emoji: '🌕', name: '2K' }
             ];
-            
-            // Обработчик движения мыши
-            document.addEventListener('mousemove', function(e) {
-                hammer.style.left = (e.pageX - 40) + 'px';
-                hammer.style.top = (e.pageY - 20) + 'px';
-            });
-            
-            // Обработчик клика (удара молотком)
-            container.addEventListener('click', function(e) {
-                const rect = container.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                // Анимация удара молотком
-                hammer.classList.remove('hit');
-                void hammer.offsetWidth; // Сбрасываем анимацию
-                hammer.classList.add('hit');
-                
-                // Создаем эффект трещины
-                createCrack(x, y);
-                
-                // Добавляем эффект вспышки
-                createFlash(x, y);
-            });
-            
-            // Функция создания трещины
-            function createCrack(x, y) {
-                const crack = document.createElement('div');
-                crack.classList.add('crack');
-                
-                // Выбираем случайную трещину
-                const randomCrack = cracks[Math.floor(Math.random() * cracks.length)];
-                crack.style.backgroundImage = `url("${randomCrack}")`;
-                
-                // Устанавливаем позицию
-                crack.style.left = (x - 50) + 'px';
-                crack.style.top = (y - 50) + 'px';
-                crack.style.width = '100px';
-                crack.style.height = '100px';
-                
-                // Добавляем трещину в контейнер
-                container.appendChild(crack);
-                
-                // Удаляем трещину через некоторое время
-                setTimeout(() => {
-                    crack.remove();
-                }, 3000);
+
+            let score = 0;
+            const MAX = 9999;
+            const scoreSpan = document.getElementById('scoreDisplay');
+            const clickImg = document.getElementById('clickPhoto');
+            const milestoneGrid = document.getElementById('milestoneGrid');
+            const toast = document.getElementById('achievementToast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastText = document.getElementById('toastText');
+            const flash = document.getElementById('flashOverlay');
+            const resetBtn = document.getElementById('resetButton');
+
+            let reachedSet = new Set();   // достигнутые значения
+
+            // --- инициализация сетки милстоунов
+            function renderMilestones() {
+                let html = '';
+                MILESTONES.forEach(m => {
+                    const reachedClass = reachedSet.has(m.score) ? 'reached' : '';
+                    html += `<div class="milestone-badge ${reachedClass}" data-target="${m.score}">
+                        <span class="milestone-emoji">${m.emoji}</span>
+                        <span>${m.name}</span>
+                    </div>`;
+                });
+                milestoneGrid.innerHTML = html;
             }
-            
-            // Функция создания вспышки
-            function createFlash(x, y) {
-                const flash = document.createElement('div');
-                flash.style.position = 'absolute';
-                flash.style.left = (x - 25) + 'px';
-                flash.style.top = (y - 25) + 'px';
-                flash.style.width = '50px';
-                flash.style.height = '50px';
-                flash.style.borderRadius = '50%';
-                flash.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                flash.style.pointerEvents = 'none';
-                
-                container.appendChild(flash);
-                
-                // Анимация вспышки
-                let opacity = 0.5;
-                const fade = setInterval(() => {
-                    opacity -= 0.05;
-                    flash.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
-                    
-                    if (opacity <= 0) {
-                        clearInterval(fade);
-                        flash.remove();
+
+            // обновить конкретный милстоун (подсветка)
+            function updateMilestone(targetScore, addReached) {
+                const items = document.querySelectorAll('.milestone-badge');
+                items.forEach(item => {
+                    const val = parseInt(item.dataset.target, 10);
+                    if (val === targetScore) {
+                        if (addReached) item.classList.add('reached');
+                        else item.classList.remove('reached');
                     }
-                }, 30);
+                });
             }
-            
-            // Сброс при нажатии R
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'r' || e.key === 'R') {
-                    // Удаляем все трещины
-                    const allCracks = document.querySelectorAll('.crack');
-                    allCracks.forEach(crack => crack.remove());
+
+            // перерисовать все милстоуны по reachedSet
+            function refreshAllMilestones() {
+                const items = document.querySelectorAll('.milestone-badge');
+                items.forEach(item => {
+                    const val = parseInt(item.dataset.target, 10);
+                    if (reachedSet.has(val)) item.classList.add('reached');
+                    else item.classList.remove('reached');
+                });
+            }
+
+            // --- изменение счета
+            function setScore(newVal) {
+                const oldScore = score;
+                score = Math.min(newVal, MAX);
+                updateScoreDisplay();
+
+                if (score > oldScore) {
+                    checkMilestones(oldScore, score);
                 }
-            });
-        });
+            }
+
+            function updateScoreDisplay() {
+                scoreSpan.textContent = score;
+                scoreSpan.classList.add('pop');
+                setTimeout(() => scoreSpan.classList.remove('pop'), 150);
+            }
+
+            // Проверка пересечения рубежей
+            function checkMilestones(from, to) {
+                for (let m of MILESTONES) {
+                    const target = m.score;
+                    if (from < target && to >= target && !reachedSet.has(target)) {
+                        reachedSet.add(target);
+                        showToast(m.emoji, `+${target}!`);
+                        globalFlashEffect();
+                        updateMilestone(target, true);
+                    }
+                }
+            }
+
+            // --- эффекты
+            function showToast(emoji, msg) {
+                toastIcon.textContent = emoji;
+                toastText.textContent = msg;
+                toast.classList.add('show');
+                if (navigator.vibrate) navigator.vibrate(20);
+
+                setTimeout(() => toast.classList.remove('show'), 1500);
+            }
+
+            function globalFlashEffect() {
+                flash.classList.add('active');
+                setTimeout(() => flash.classList.remove('active'), 400);
+
+                // дополнительная анимация фото
+                clickImg.classList.add('photo-flash');
+                setTimeout(() => clickImg.classList.remove('photo-flash'), 300);
+            }
+
+            // --- обработчик клика по фото
+            function onPhotoClick(e) {
+                e.preventDefault();   // для touch
+                setScore(score + 1);
+
+                // тактильная отдача
+                if (navigator.vibrate) navigator.vibrate(5);
+
+                // быстрая вспышка на фото (активное состояние дублируется)
+                clickImg.style.transform = 'scale(0.86)';
+                setTimeout(() => clickImg.style.transform = '', 100);
+            }
+
+            // Сброс игры
+            function resetAll() {
+                score = 0;
+                reachedSet.clear();
+                updateScoreDisplay();
+                refreshAllMilestones();
+                // показать уведомление о сбросе (небольшой тост)
+                showToast('🔄', 'Сброс');
+                // убрать активность с фото
+                clickImg.style.transform = '';
+            }
+
+            // --- инициализация
+            function init() {
+                renderMilestones();
+                // клики
+                clickImg.addEventListener('click', onPhotoClick);
+                clickImg.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    onPhotoClick(e);
+                }, { passive: false });
+
+                resetBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    resetAll();
+                });
+                resetBtn.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+
+                // Стартовый ноль
+                score = 0;
+                scoreSpan.textContent = '0';
+                reachedSet.clear();
+                refreshAllMilestones();
+
+                // запрет контекстного меню
+                document.addEventListener('contextmenu', e => e.preventDefault());
+            }
+
+            init();
+        })();
     </script>
+
+    <!-- Дополнительная страховка для iPhone: картинка загружается с нужными пропорциями -->
+    <style>
+        /* Без этого фото может растягиваться */
+        .click-photo {
+            object-fit: cover;
+            width: 210px;
+            height: 210px;
+            background: #ffa559; /* цвет подложки под фото */
+        }
+        /* адаптация для совсем маленьких экранов */
+        @media (max-width: 380px) {
+            .click-photo {
+                width: 170px;
+                height: 170px;
+            }
+            .score-board { padding: 12px 18px; }
+            #scoreDisplay { font-size: 2.8rem; }
+        }
+    </style>
 </body>
 </html>
-
